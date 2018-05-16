@@ -11,7 +11,7 @@ const verifyInputFile = async (...args) => {
   return path
 }
 
-const bucketUpload = async (bucketService, { file, key, copyKey, isSkipUploaded = false }, log) => {
+const bucketUpload = async (bucketService, { file, buffer, key, copyKey, isSkipUploaded = false }, log) => {
   __DEV__ && console.log('[bucketUpload]', file, key, copyKey, isSkipUploaded)
   try {
     if (isSkipUploaded) {
@@ -23,8 +23,9 @@ const bucketUpload = async (bucketService, { file, key, copyKey, isSkipUploaded 
       }
     }
 
-    log(` - upload: ${key} (${binary((await statAsync(file)).size)}B)`)
-    const sourceInfo = await wrapRetry(bucketService.putBuffer, key, await readFileAsync(file), ACCESS_TYPE.PUBLIC_READ)
+    buffer = buffer || await readFileAsync(file)
+    log(` - upload: ${key} (${binary(buffer.length)}B)`)
+    const sourceInfo = await wrapRetry(bucketService.putBuffer, key, buffer, ACCESS_TYPE.PUBLIC_READ)
     log(` - uploaded: ${key}, eTag: ${sourceInfo.eTag}`)
 
     copyKey && log(` - copy to: ${copyKey}, from: ${key}`)

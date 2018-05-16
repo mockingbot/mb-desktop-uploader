@@ -1,7 +1,7 @@
 {
   "private": true,
   "name": "mb-desktop-uploader",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "author": "mockingbot",
   "license": "MIT",
   "description": "Upload mb-desktop to cloud Bucket.",
@@ -18,18 +18,17 @@
     "build-library": "babel-node ./script/webpack production profile",
     "build-library-dev": "babel-node ./script/webpack development watch",
     "// ==============================": "",
-    "analyze-stat": "webpack-bundle-analyzer ./profile-stat-gitignore.json",
+    "analyze-stat": "npx webpack-bundle-analyzer .temp-gitignore/profile-stat.json",
     "prepack": "echo \"Error: pack with script-*\" && exit 1"
   },
   "engines": {
     "node": ">=8.8",
-    "npm": ">=5"
+    "npm": ">=6"
   },
   "devDependencies": {
-    "bucket-sdk": "0.2.0-dev.0",
-    "dev-dep-tool": "0.2.2-dev.5",
-    "dev-dep-web": "0.2.2-dev.5",
-    "dr-js": "0.15.0-dev.5",
-    "webpack-bundle-analyzer": "^2.11.1"
+    "bucket-sdk": "^0.2.1",
+    "dev-dep-tool": "0.4.1-dev.0",
+    "dev-dep-web": "^0.4.0",
+    "dr-js": "0.17.1-dev.0"
   }
 }

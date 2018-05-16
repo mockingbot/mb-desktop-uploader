@@ -51,17 +51,20 @@ const initBucketService = async (getSingleOption, log) => {
 
 const upload = async (uploadPlatform, { getOptionOptional, getSingleOption, getSingleOptionOptional }, log) => {
   const bucketService = await initBucketService(getSingleOption, log)
+  const uploadConfig = {
+    inputPath: getSingleOption('upload-input-path'),
+    version: getSingleOption('upload-version'),
+    locale: getSingleOptionOptional('upload-locale'),
+    arch: getSingleOptionOptional('upload-arch'),
+    publicUrlPrefix: getSingleOptionOptional('upload-public-url-prefix'),
+    isForce: Boolean(getOptionOptional('force'))
+  }
 
-  const inputPath = getSingleOption('upload-input-path')
-  const version = getSingleOption('upload-version')
-  const locale = getSingleOptionOptional('upload-locale')
-  const arch = getSingleOptionOptional('upload-arch')
+  log(`[Info] platform: ${uploadPlatform} ${JSON.stringify(uploadConfig, null, ' ')}`)
 
-  log(`[Info] platform: ${uploadPlatform} ${JSON.stringify({ inputPath, version, locale, arch }, null, ' ')}`)
-
-  if (uploadPlatform === 'linux') return uploadLinux(bucketService, { inputPath, version, locale, arch }, log)
-  if (uploadPlatform === 'win32') return uploadWin32(bucketService, { inputPath, version, locale, arch }, log)
-  if (uploadPlatform === 'darwin') return uploadDarwin(bucketService, { inputPath, version, locale, arch }, log)
+  if (uploadPlatform === 'linux') return uploadLinux(bucketService, uploadConfig, log)
+  if (uploadPlatform === 'win32') return uploadWin32(bucketService, uploadConfig, log)
+  if (uploadPlatform === 'darwin') return uploadDarwin(bucketService, uploadConfig, log)
 }
 
 const main = async () => {
@@ -69,18 +72,23 @@ const main = async () => {
   const uploadPlatform = optionData.getSingleOptionOptional('upload-platform')
   const log = optionData.getOptionOptional('quiet') ? () => {} : console.log
 
-  if (uploadPlatform) {
-    let prevTime = clock()
-    const logWithTime = (...args) => {
-      const deltaTime = clock() - prevTime
-      prevTime += deltaTime
-      log(...args, `(+${formatTime(deltaTime)})`)
-    }
-    await upload(uploadPlatform, optionData, logWithTime).catch((error) => {
-      console.warn(`[Error] for platform: ${uploadPlatform}:`, error.stack || error)
-      process.exit(2)
-    })
-  } else optionData.getOptionOptional('version') ? console.log(JSON.stringify({ packageName, packageVersion }, null, '  ')) : console.log(formatUsage())
+  if (!uploadPlatform) {
+    return optionData.getOptionOptional('version')
+      ? console.log(JSON.stringify({ packageName, packageVersion }, null, '  '))
+      : console.log(formatUsage(null, optionData.getOptionOptional('help') ? null : 'simple'))
+  }
+
+  let prevTime = clock()
+  const logWithTime = (...args) => {
+    const deltaTime = clock() - prevTime
+    prevTime += deltaTime
+    log(...args, `(+${formatTime(deltaTime)})`)
+  }
+
+  await upload(uploadPlatform, optionData, logWithTime).catch((error) => {
+    console.warn(`[Error] for platform: ${uploadPlatform}:`, error.stack || error)
+    process.exit(2)
+  })
 }
 
 main().catch((error) => {

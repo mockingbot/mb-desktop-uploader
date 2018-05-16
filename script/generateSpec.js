@@ -1,11 +1,12 @@
 import { resolve } from 'path'
 import { writeFileSync } from 'fs'
 
-import { argvFlag, runMain } from 'dev-dep-tool/library/__utils__'
-import { getLogger } from 'dev-dep-tool/library/logger'
-import { renderMarkdownFileLink } from 'dev-dep-tool/library/ExportIndex/renderMarkdown'
-
 import { stringIndentLine } from 'dr-js/library/common/format'
+
+import { argvFlag, runMain } from 'dev-dep-tool/library/main'
+import { getLogger } from 'dev-dep-tool/library/logger'
+import { autoAppendMarkdownHeaderLink, renderMarkdownFileLink } from 'dev-dep-tool/library/ExportIndex/renderMarkdown'
+
 import { formatUsage } from 'source/option'
 
 const PATH_ROOT = resolve(__dirname, '..')
@@ -23,10 +24,10 @@ runMain(async (logger) => {
   writeFileSync(fromRoot('SPEC.md'), [
     '# Specification',
     '',
-    '* [Bin Option Format](#bin-option-format)',
-    '',
-    '#### Bin Option Format',
-    ...renderMarkdownBinOptionFormat(),
+    ...autoAppendMarkdownHeaderLink(
+      '#### Bin Option Format',
+      ...renderMarkdownBinOptionFormat()
+    ),
     ''
   ].join('\n'))
 }, getLogger('generate-spec', argvFlag('quiet')))

@@ -1,7 +1,7 @@
 import { readFileSync } from 'fs'
 import { verifyInputFile, bucketUpload } from './function'
 
-const uploadWin32 = async (bucketService, { inputPath, version, locale, arch }, log) => {
+const uploadWin32 = async (bucketService, { inputPath, version, locale, arch, isForce }, log) => {
   const KEY_PREFIX = `win32-${arch}/`
 
   const nameRelease = `RELEASES`
@@ -15,9 +15,9 @@ const uploadWin32 = async (bucketService, { inputPath, version, locale, arch }, 
   const hasPackDelta = readFileSync(fileRelease, { encoding: 'utf8' }).includes(namePackDelta)
   const filePackDelta = hasPackDelta && await verifyInputFile(inputPath, namePackDelta)
 
-  await bucketUpload(bucketService, { file: fileInstaller, key: `${KEY_PREFIX}${nameInstaller}`, copyKey: `${KEY_PREFIX}MockingBot-Setup.exe`, isSkipUploaded: true }, log)
-  await bucketUpload(bucketService, { file: filePackFull, key: `${KEY_PREFIX}${namePackFull}`, isSkipUploaded: true }, log)
-  hasPackDelta && await bucketUpload(bucketService, { file: filePackDelta, key: `${KEY_PREFIX}${namePackDelta}`, isSkipUploaded: true }, log)
+  await bucketUpload(bucketService, { file: fileInstaller, key: `${KEY_PREFIX}${nameInstaller}`, copyKey: `${KEY_PREFIX}MockingBot-Setup.exe`, isSkipUploaded: !isForce }, log)
+  await bucketUpload(bucketService, { file: filePackFull, key: `${KEY_PREFIX}${namePackFull}`, isSkipUploaded: !isForce }, log)
+  hasPackDelta && await bucketUpload(bucketService, { file: filePackDelta, key: `${KEY_PREFIX}${namePackDelta}`, isSkipUploaded: !isForce }, log)
   await bucketUpload(bucketService, { file: fileRelease, key: `${KEY_PREFIX}${nameRelease}` }, log)
 }
 

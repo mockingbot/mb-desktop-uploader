@@ -1,11 +1,11 @@
-import { createOptionParser } from 'dr-js/module/common/module/Option/Parser'
-import { ConfigPreset, getOptionalFormatValue } from 'dr-js/module/common/module/Option/Preset'
-import { parseOptionMap, createOptionGetter } from 'dr-js/module/node/module/Option'
+import { getOptionalFormatValue } from 'dr-js/module/common/module/Option/preset'
+import { ConfigPresetNode, prepareOption } from 'dr-js/module/node/module/Option'
 
-const { SingleString, OneOfString, BooleanFlag, Config } = ConfigPreset
+const { SingleString, OneOfString, SinglePath, BooleanFlag, Config } = ConfigPresetNode
 
 const onlyWin32Darwin = getOptionalFormatValue('upload-platform', 'win32', 'darwin')
 const onlyWin32 = getOptionalFormatValue('upload-platform', 'win32')
+const onlyDarwin = getOptionalFormatValue('upload-platform', 'darwin')
 
 const OPTION_CONFIG = {
   prefixENV: 'uploader',
@@ -20,10 +20,12 @@ const OPTION_CONFIG = {
       optional: true,
       name: 'upload-platform',
       extendFormatList: [
-        { ...SingleString, isPath: true, name: 'upload-input-path' },
+        { ...SinglePath, name: 'upload-input-path' },
         { ...SingleString, name: 'upload-version', description: 'like 0.0.0' },
         { ...OneOfString([ 'zh', 'en' ]), optional: onlyWin32Darwin, name: 'upload-locale', description: 'like zh/en, for win32/darwin' },
         { ...OneOfString([ 'x64', 'ia32' ]), optional: onlyWin32, name: 'upload-arch', description: 'like x64/ia32, for win32' },
+        { ...SingleString, optional: onlyDarwin, name: 'upload-public-url-prefix' },
+        { ...BooleanFlag, name: 'force', shortName: 'f', description: `do not skip uploaded file` },
 
         // bucket-sdk
         { ...OneOfString([ 'aws', 'oss', 'tc' ]), name: 'upload-service', shortName: 's' },
@@ -37,8 +39,6 @@ const OPTION_CONFIG = {
   ]
 }
 
-const { parseCLI, parseENV, parseJSON, processOptionMap, formatUsage } = createOptionParser(OPTION_CONFIG)
-
-const parseOption = async () => createOptionGetter(await parseOptionMap({ parseCLI, parseENV, parseJSON, processOptionMap }))
+const { parseOption, formatUsage } = prepareOption(OPTION_CONFIG)
 
 export { parseOption, formatUsage }

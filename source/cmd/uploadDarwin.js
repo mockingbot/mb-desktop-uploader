@@ -9,8 +9,8 @@ const uploadDarwin = async (bucketService, { inputPath, version, locale }, log) 
   const fileInstaller = await verifyInputFile(inputPath, nameInstaller)
   const filePack = await verifyInputFile(inputPath, namePack)
 
-  await bucketUpload(bucketService, { file: fileInstaller, key: `${KEY_PREFIX}${nameInstaller}`, copyKey: `${KEY_PREFIX}MockingBot.dmg` }, log)
-  await bucketUpload(bucketService, { file: filePack, key: `${KEY_PREFIX}${namePack}` }, log)
+  await bucketUpload(bucketService, { file: fileInstaller, key: `${KEY_PREFIX}${nameInstaller}`, copyKey: `${KEY_PREFIX}MockingBot.dmg`, isSkipUploaded: true }, log)
+  await bucketUpload(bucketService, { file: filePack, key: `${KEY_PREFIX}${namePack}`, isSkipUploaded: true }, log)
 }
 
 export { uploadDarwin }

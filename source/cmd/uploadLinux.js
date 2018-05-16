@@ -9,8 +9,8 @@ const uploadLinux = async (bucketService, { inputPath, version }, log) => {
   const fileInstaller64 = await verifyInputFile(inputPath, nameInstaller64)
   const fileInstaller32 = await verifyInputFile(inputPath, nameInstaller32)
 
-  await bucketUpload(bucketService, { file: fileInstaller64, key: `${KEY_PREFIX}${nameInstaller64}`, copyKey: `${KEY_PREFIX}MockingBot_amd64.deb` }, log)
-  await bucketUpload(bucketService, { file: fileInstaller32, key: `${KEY_PREFIX}${nameInstaller32}`, copyKey: `${KEY_PREFIX}MockingBot_i386.deb` }, log)
+  await bucketUpload(bucketService, { file: fileInstaller64, key: `${KEY_PREFIX}${nameInstaller64}`, copyKey: `${KEY_PREFIX}MockingBot_amd64.deb`, isSkipUploaded: true }, log)
+  await bucketUpload(bucketService, { file: fileInstaller32, key: `${KEY_PREFIX}${nameInstaller32}`, copyKey: `${KEY_PREFIX}MockingBot_i386.deb`, isSkipUploaded: true }, log)
 }
 
 export { uploadLinux }

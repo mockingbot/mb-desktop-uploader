@@ -57,12 +57,11 @@ const upload = async (uploadPlatform, { getOptionOptional, getSingleOption, getS
   const locale = getSingleOptionOptional('upload-locale')
   const arch = getSingleOptionOptional('upload-arch')
 
-  log(`[upload] platform: ${uploadPlatform} ${JSON.stringify({ inputPath, version, locale, arch }, null, ' ')}`)
+  log(`[Info] platform: ${uploadPlatform} ${JSON.stringify({ inputPath, version, locale, arch }, null, ' ')}`)
 
   if (uploadPlatform === 'linux') return uploadLinux(bucketService, { inputPath, version, locale, arch }, log)
   if (uploadPlatform === 'win32') return uploadWin32(bucketService, { inputPath, version, locale, arch }, log)
   if (uploadPlatform === 'darwin') return uploadDarwin(bucketService, { inputPath, version, locale, arch }, log)
-  log(`finished upload to: ${uploadPlatform}`)
 }
 
 const main = async () => {
